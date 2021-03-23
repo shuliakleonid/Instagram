@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import * as ROUTES from './constants/routes'
+import * as ROUTES from './constants/routes';
+import './styles/app.css'
 
 const Login = lazy(() => import('./pages/Login')); // ленивая загрузка
 
