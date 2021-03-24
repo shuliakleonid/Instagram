@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FirebaseContext } from '../context/firebase';
 import * as ROUTES from '../constants/routes';
+import { doesUsernameExist } from '../services/firebase';
+
 
 const SignUp = () => {
   const history = useHistory();
@@ -10,17 +12,48 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
 
 
-  const [userName,setUserName] = useState('')
-  const [fullName,setFullName] = useState('')
+  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const isInvalid = password === '' || emailAddress === '';
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+    const usernameDoesNotExists = await doesUsernameExist(username);
+    if (!usernameDoesNotExists.length) {
+      try {
+        const createdUserResult = await firebase
+          .auth()
+          .createUserWithEmailAndPassword(emailAddress, password);
+        // authentication
+        await createdUserResult.user.updateProfile({
+          displayName: username
+        });
+        // firebase user collection
+        await firebase.firestore().collection('user').add({
+          userId: createdUserResult.user.uid,
+          username: username.toLowerCase(),
+          fullName,
+          emailAddress: emailAddress.toLowerCase(),
+          following: [],
+          dateCreated: Date.now()
+        });
+        history.push(ROUTES.DASHBOARD);
+      } catch (e) {
+        setUsername('');
+        setFullName('');
+        setPassword('');
+        setError(e.message)
+      }
+    }else {
+      setError('That username is already taken, please try another.')
+    }
   };
+
 
   useEffect(() => {
     document.title = 'Sign Up - Instagram';
   }, []);
+
   return (
     < div className='container flex mx-auto max-w-screen-md items-center h-screen '>
       <div className='flex w-3/5'><img src='./images/iphone-with-profile.jpg' alt='iPhone with Instagram app' /></div>
@@ -34,11 +67,11 @@ const SignUp = () => {
           <form onSubmit={handleSignUp} method='POST'>
             <input
               type='text'
-              onChange={({ target }) => setUserName(target.value)}
+              onChange={({ target }) => setUsername(target.value)}
               placeholder='Username'
               aria-label='Enter your Username address'
               className='text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2'
-              value={userName}
+              value={username}
             />
             <input
               type='text'
