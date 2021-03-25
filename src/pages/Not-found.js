@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-export const NotFound = () => {
+const NotFound = () => {
   useEffect(()=>{
     document.title = 'Not Found!'
   },[])
@@ -15,3 +15,4 @@ export const NotFound = () => {
   );
 };
 
+export default NotFound;
