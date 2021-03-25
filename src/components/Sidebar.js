@@ -1,10 +1,9 @@
 import React from 'react';
 
-const Sidebar = () => (
+export const Sidebar = () => (
     <div>
       i am sidebar
     </div>
   );
 
 
-export default Sidebar;
