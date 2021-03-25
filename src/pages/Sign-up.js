@@ -18,8 +18,8 @@ const SignUp = () => {
   const isInvalid = password === '' || emailAddress === '';
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const usernameDoesNotExists = await doesUsernameExist(username);
-    if (!usernameDoesNotExists.length) {
+    const usernameExists = await doesUsernameExist(username);
+    if (!usernameExists.length) {
       try {
         const createdUserResult = await firebase
           .auth()
