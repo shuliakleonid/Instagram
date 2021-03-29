@@ -1,4 +1,4 @@
-import { firebase } from '../lib/firebase';
+import { FieldValue, firebase } from '../lib/firebase';
 
 export const doesUsernameExist = async (username) => {
   const result = await firebase
@@ -19,17 +19,53 @@ export const getUserByUserId = async (userId) => {
   return result.docs.map((item) => ({
     ...item.data(),
     docId: item.id
-  }))
+  }));
 };
 
-export const getSuggestedProfiles = async (userId,following) => {
+export const getSuggestedProfiles = async (userId, following) => {
   const result = await firebase
     .firestore()
     .collection('users')
     .limit(10)
-    .get()
-  console.log(result.docs.map((user)=>({...user.data(),docId:user.id})).filter((profile)=>profile.userId !== userId && !following.includes(profile.userId)));
- return result.docs
-   .map((user)=>({...user.data(),docId:user.id}))
-   .filter((profile)=>profile.userId !== userId && !following.includes(profile.userId))
-}
+    .get();
+
+  return result.docs
+    .map((user) => ({ ...user.data(), docId: user.id }))
+    .filter((profile) => profile.userId !== userId && !following.includes(profile.userId));
+};
+
+export const updateLoggedInUserFollowing = async (
+  loggedInUserDocId,
+  profileId,
+  isFollowingProfile
+) => firebase
+  .firestore()
+  .collection('users')
+  .doc(loggedInUserDocId)
+  .update({
+    following: isFollowingProfile
+      ? FieldValue.arrayRemove(profileId)
+      : FieldValue.arrayUnion(profileId)
+  });
+
+export const updateFollowedUserFollowers = async (
+  profileDocId,
+  loggedInUserDocId,
+  isFollowingProfile
+) => firebase
+  .firestore()
+  .collection('users')
+  .doc(profileDocId)
+  .update({
+    followers: isFollowingProfile
+      ? FieldValue.arrayRemove(loggedInUserDocId)
+      : FieldValue.arrayUnion(loggedInUserDocId)
+  });
+
+
+
+
+
+
+
+

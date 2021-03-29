@@ -104,7 +104,7 @@
     ]
   },
   "plugins": [
-//    "prettier",
+    "prettier",
     "react",
     "react-hooks"
   ]
