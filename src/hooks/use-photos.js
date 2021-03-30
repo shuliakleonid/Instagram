@@ -11,12 +11,12 @@ export const usePhotos = () => {
   useEffect(() => {
     const getTimelinePhotos = async () => {
       const [{following}] = await getUserByUserId(userId)
-
+      let followedUsersPhotos=[]
       if(following.length > 0){
-        const followedUsersPhotos = await getPhotos(userId,following)
-        followedUserPhotos.sort((a, b) => b.dateCreated - a.dateCreated);
-        setPhotos(followedUsersPhotos)
+        followedUsersPhotos = await getPhotos(userId,following)
       }
+      followedUsersPhotos.sort((a, b) => b.dateCreated - a.dateCreated);
+        setPhotos(followedUsersPhotos)
     };
     getTimelinePhotos()
   },[]);
