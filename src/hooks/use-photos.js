@@ -16,10 +16,10 @@ export const usePhotos = () => {
         followedUsersPhotos = await getPhotos(userId,following)
       }
       followedUsersPhotos.sort((a, b) => b.dateCreated - a.dateCreated);
-        setPhotos(followedUsersPhotos)
+      setPhotos(followedUsersPhotos)
     };
     getTimelinePhotos()
-  },[]);
+  },[userId]);
 
   return {photos}
 };
